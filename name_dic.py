@@ -20,65 +20,43 @@ BH_RR_RB211 = {
 "5Ta": "A26GG05A",
 "5Tb": "A26GG05B",
 "5Tc": "A26GG05C",
-"6Ta": "A26GG455B",
-"6Tb": "GG45501A",
-"6Tc": "GG45502A",
-"6Td": "GG45503A",
-"6Te": "GG45504A",
-"6Tf": "GG45505A",
-"6Tg": "GG45506A",
-"6Th": "GG45507A",
-"6Ti": "GG45508A",
-"6Tj": "GG45509A",
-"6Tk": "GG45510A",
-"6Tl": "GG45511A",
-"6Tm": "GG45512A",
-"6Tn": "GG45513A",
-"6To": "GG45514A",
-"6Tp": "GG45515A",
-"6Tq": "GG45516A",
-"6Tr": "GG45517A",
+"6Ta": "GG45501A",
+"6Tb": "GG45502A",
+"6Tc": "GG45503A",
+"6Td": "GG45504A",
+"6Te": "GG45505A",
+"6Tf": "GG45506A",
+"6Tg": "GG45507A",
+"6Th": "GG45508A",
+"6Ti": "GG45509A",
+"6Tj": "GG45510A",
+"6Tk": "GG45511A",
+"6Tl": "GG45512A",
+"6Tm": "GG45513A",
+"6Tn": "GG45514A",
+"6To": "GG45515A",
+"6Tp": "GG45516A",
+"6Tq": "GG45517A",
+# "6Tr": "A26GG455B",
 "3V": "A39GGC",
 "4V": "A39GGI",
 "5V": "A39GGT",
 "1P": "A63GG20",
 "2P": "A63GG25",
 "6P": "A63GG455",
-"NLa": "A99GGNL1",
-"NLb": "A99GGNL2",
-"NHa": "A99GGNH1",
-"NHb": "A99GGNH2",
-"NPa": "A99PT1", 
-"NPb": "A99PT2",
+"2NLa": "A99GGNL1",
+"2NLb": "A99GGNL2",
+"3NHa": "A99GGNH1",
+"3NHb": "A99GGNH2",
+"0NPa": "A99PT1", 
+"0NPb": "A99PT2",
 
 "7T_2a": "A26PTRC1A",
 "7T_2b": "A26PTRC1B",
 "7T_4a": "A26PTRC2A",
 "7T_4b": "A26PTRC2B",
-"TS": "A26EVGTA",
+# "TS": "A26EVGTA",
 }
-
-BH_RR_RB211_error = {     # 可能出现的错误名称 
-"3Tb": "A26GG311B", 
-}
-
-BH_RR_RB211_avg = [
-# External Condition: 
-"0GVA",
-"0TF",
-
-# Measurements:
-"2T",
-"3T",
-"5T",
-"6T",
-"NL",
-"NH",
-"NP",
-
-"7T_2",
-"7T_4",
-]
 
 ##### 2 ##### BH_GE_LM2500 #####
 
@@ -89,10 +67,9 @@ BH_GE_LM2500 = {
 "0FF": "A60FG6W",
 "0T": "a26at",
 "0GVAa": "HWINVSVA",
-"0GVAb": "HWINVSVAA",
-"0GVAc": "VSVPOPDM",
+# "0GVAb": "HWINVSVAA",
+# "0GVAc": "VSVPOPDM",
 "1T": "T2A",
-
 
 # Measurements:
 "1P": "P2SEL",
@@ -104,9 +81,9 @@ BH_GE_LM2500 = {
 "3Tb": "T3A2",
 "3Tc": "T3B1",
 "3Td": "T3B2",
-"6TOa": "A26BT",
-"6TOb": "a26bt1", 
-"6TOc": "a26bt2", 
+"6TO1": "a26bt1", 
+"6TOb": "a26bt2", 
+# "6TOc": "A26BT",
 "6Ta": "T48A",
 "6Tb": "T48B",
 "6Tc": "T48C",
@@ -117,10 +94,10 @@ BH_GE_LM2500 = {
 "6Th": "T48H",
 # "6Ti": "T48SEL",
 
-"NHa": "NGGA",
-"NHb": "NGGB",
-"NPa": "NPTA",
-"NPb": "NPTB",
+"3NHa": "NGGA",
+"3NHb": "NGGB",
+"0NPa": "NPTA",
+"0NPb": "NPTB",
 
 "7Ta": "T8a",
 "7Tb": "T8b",
@@ -138,26 +115,6 @@ BH_GE_LM2500 = {
 "7T_4b": "ws2aib",
 }
 
-BH_GE_LM2500_error = {     # 可能出现的错误名称 
-}
-
-BH_GE_LM2500_avg = [
-# External Condition:
-"0GVA",
-
-# Measurements:
-"6TO",
-"3T",
-"6T",
-"NH",
-"NP",
-"7T",
-"7T_1",
-"7T_2",
-"7T_3",
-"7T_4",
-]
-
 ##### 3 ##### Liburdi_RR_RB211 #####
 
 Liburdi_RR_RB211 = {
@@ -171,48 +128,37 @@ Liburdi_RR_RB211 = {
 "0OPT": "optime",
 
 # Measurements:
-"6Ta": "a26gg455b",
-"6Tb": "a26gg455.01a",
-"6Tc": "a26gg455.02a",
-"6Td": "a26gg455.03a",
-"6Te": "a26gg455.04a",
-"6Tf": "a26gg455.05a",
-"6Tg": "a26gg455.06a",
-"6Th": "a26gg455.07a",
-"6Ti": "a26gg455.08a",
-"6Tj": "a26gg455.09a",
-"6Tk": "a26gg455.10a",
-"6Tl": "a26gg455.11a",
-"6Tm": "a26gg455.12a",
-"6Tn": "a26gg455.13a",
-"6To": "a26gg455.14a",
-"6Tp": "a26gg455.15a",
-"6Tq": "a26gg455.16a",
-"6Tr": "a26gg455.17a",
+"6Ta": "a26gg455.01a",
+"6Tb": "a26gg455.02a",
+"6Tc": "a26gg455.03a",
+"6Td": "a26gg455.04a",
+"6Te": "a26gg455.05a",
+"6Tf": "a26gg455.06a",
+"6Tg": "a26gg455.07a",
+"6Th": "a26gg455.08a",
+"6Ti": "a26gg455.09a",
+"6Tj": "a26gg455.10a",
+"6Tk": "a26gg455.11a",
+"6Tl": "a26gg455.12a",
+"6Tm": "a26gg455.13a",
+"6Tn": "a26gg455.14a",
+"6To": "a26gg455.15a",
+"6Tp": "a26gg455.16a",
+"6Tq": "a26gg455.17a",
+"6Tr": "a26gg455b",
 "6P": "p6",
 "3P": "a63gg30",
-"NLa": "a99ggnl1",
-"NLb": "a99ggnl2",
-"NHa": "a99ggnh1",
-"NHb": "a99ggnh2",
-"NPa": "a99pt1",
-"NPb": "a99pt2",
+"2NLa": "a99ggnl1",
+"2NLb": "a99ggnl2",
+"3NHa": "a99ggnh1",
+"3NHb": "a99ggnh2",
+"0NPa": "a99pt1",
+"0NPb": "a99pt2",
 "2P": "p25",
 "7P": "ptexh.pressure",
 "2T": "t25",
 "3T": "t3",
 }
-
-Liburdi_RR_RB211_error = {    
-}
-
-Liburdi_RR_RB211_avg = [
-# Measurements:
-"6T",
-"NL",
-"NH",
-"NP",
-]
 
 
 ##### 4 ##### Liburdi_GE_LM2500 #####
@@ -244,20 +190,20 @@ Liburdi_GE_LM2500 = {
 "6Th": "t48h",
 # "6Ti": "t48sel",
 "6P": "a63hp",
-"NHa": "ngg.a",
-"NHb": "ngg.b",
+"3NHa": "ngg.a",
+"3NHb": "ngg.b",
 # "NHc": "ngg.sel",
 "3PSa": "ps3a",
 "3PSb": "ps3b",
 # "3PSc": "ps3sel",
-"3Ta": "t3sel",
-"3Tb": "t3a1",
-"3Tc": "t3a2",
-"3Td": "t3b1",
-"3Te": "t3b2",
+"3Ta": "t3a1",
+"3Tb": "t3a2",
+"3Tc": "t3b1",
+"3Td": "t3b2",
+# "3Te": "t3sel",
 
-"NPa": "npt.a",
-"NPb": "npt.b",
+"0NPa": "npt.a",
+"0NPb": "npt.b",
 # "NPc": "npt.sel",
 "7Ta": "t8a",
 "7Tb": "t8b",
@@ -278,24 +224,3 @@ Liburdi_GE_LM2500 = {
 "7T_4b": "ws2fi.b",
 "7P": "ptexh.pressure",
 }
-
-Liburdi_GE_LM2500_error = {
-}
-
-Liburdi_GE_LM2500_avg = [
-# External Condition:
-"1T",
-
-# Measurements:
-"1P",
-"3T",
-"6T",
-"NH",
-"NP",
-"3PS",
-"7T",
-"7T_1",
-"7T_2",
-"7T_3",
-"7T_4",
-]
