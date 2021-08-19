@@ -43,14 +43,12 @@ class NameModifier():
     def __read_excel(self):
         df = pd.read_excel('data_name_conversion.xlsx',sheet_name="BH_RR_RB211")
         BH_RR_RB211 = df.to_dict(orient='records')[0]
-        print(BH_RR_RB211)
         df = pd.read_excel('data_name_conversion.xlsx',sheet_name="BH_GE_LM2500")
         BH_GE_LM2500 = df.to_dict(orient='records')[0]
         df = pd.read_excel('data_name_conversion.xlsx',sheet_name="Liburdi_RR_RB211")
         Liburdi_RR_RB211 = df.to_dict(orient='records')[0]
         df = pd.read_excel('data_name_conversion.xlsx',sheet_name="Liburdi_GE_LM2500")
         Liburdi_GE_LM2500 = df.to_dict(orient='records')[0]
-
         return BH_RR_RB211,BH_GE_LM2500,Liburdi_RR_RB211,Liburdi_GE_LM2500
 
     # Liburdi数据前缀处理
@@ -91,7 +89,8 @@ class NameModifier():
         #         if type(data.iat[i,j]) == str:
         #             data.iat[i,j] = -1
 
-        data.replace(regex=r".+", value=-1, inplace=True)
+        data.replace(regex=r".*[a-zA-Z]+.*", value=-1, inplace=True)
+        return data.apply(pd.to_numeric,errors = 'ignore')
 
     # 部分数据计算平均值
     def avg_calculating(self,data):
@@ -188,7 +187,7 @@ class NameModifier():
         # 列切片
         new_data = self.slice_up(data)
         # 异常值处理
-        self.missing_value_processing(new_data)
+        new_data = self.missing_value_processing(new_data)
         # 多测量值数据的均值计算
         self.avg_calculating(new_data)
         # 不同系统测量值之间取交集或并集，并用-1补全没有的数据
