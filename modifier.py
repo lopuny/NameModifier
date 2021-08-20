@@ -1,5 +1,8 @@
 import pandas as pd
 import re
+import os
+
+dirname = os.path.split(__file__)[0]
 
 class NameModifier():
     def __init__(self, system, engine):
@@ -13,7 +16,7 @@ class NameModifier():
             engine = "GE_LM2500"
         if engine != "RR_RB211" and engine != "GE_LM2500":
             raise Exception("Inexistent engine name! Error name: "+engine)
-        BH_RR_RB211,BH_GE_LM2500,Liburdi_RR_RB211,Liburdi_GE_LM2500 =self.__read_excel()
+        BH_RR_RB211,BH_GE_LM2500,Liburdi_RR_RB211,Liburdi_GE_LM2500 =self.__read_csv()
         self.__system = system # 检测系统
         self.__engine = engine # 燃机型号
         self.__dic_name = system + "_" + engine # 系统及燃机对应的字典的名字
@@ -39,15 +42,16 @@ class NameModifier():
                 intersection_add.append(name[0:-1])
         self.__name_union = self.__name_union | set(union_add)
         self.__name_intersection = self.__name_intersection | set(intersection_add)
+        self.__tags = []
 
-    def __read_excel(self):
-        df = pd.read_excel('data_name_conversion.xlsx',sheet_name="BH_RR_RB211")
+    def __read_csv(self):
+        df = pd.read_csv(dirname + "/Config/BH_RR_RB211.csv")
         BH_RR_RB211 = df.to_dict(orient='records')[0]
-        df = pd.read_excel('data_name_conversion.xlsx',sheet_name="BH_GE_LM2500")
+        df = pd.read_csv(dirname + "/Config/BH_GE_LM2500.csv")
         BH_GE_LM2500 = df.to_dict(orient='records')[0]
-        df = pd.read_excel('data_name_conversion.xlsx',sheet_name="Liburdi_RR_RB211")
+        df = pd.read_csv(dirname + "/Config/Liburdi_RR_RB211.csv")
         Liburdi_RR_RB211 = df.to_dict(orient='records')[0]
-        df = pd.read_excel('data_name_conversion.xlsx',sheet_name="Liburdi_GE_LM2500")
+        df = pd.read_csv(dirname + "/Config/Liburdi_GE_LM2500.csv")
         Liburdi_GE_LM2500 = df.to_dict(orient='records')[0]
         return BH_RR_RB211,BH_GE_LM2500,Liburdi_RR_RB211,Liburdi_GE_LM2500
 
@@ -87,6 +91,7 @@ class NameModifier():
         # for i in range(len(data.index.values)):
         #     for j in range (len(data.columns.values)):
         #         if type(data.iat[i,j]) == str:
+        # #           print(i,j,data.iat[i,j],type(data.iat[i,j]))
         #             data.iat[i,j] = -1
 
         data.replace(regex=r".*[a-zA-Z]+.*", value=-1, inplace=True)
@@ -112,11 +117,16 @@ class NameModifier():
             data[name] = [0]*len(data.index.values)
             for i in names:
                 data[name] += data[i]
-            data[name]/=len(names)    
+            data[name]/=len(names)   
 
     # 不同系统数据间去交集或并集, 补全没有测量值的数据（用-1）
     def complement(self,data,mode = "original"):
         empty_column = [-1 for i in range(len(data.index.values))] # 空列（-1）
+        if self.__tags != []:
+            missing_names = set(self.__tags)-set(data.columns.values)
+            for name in missing_names:
+                data[name] = empty_column
+
         if mode == "original":
             return data
         elif mode == "union":
@@ -160,7 +170,7 @@ class NameModifier():
     def sort(self,data):
         return data.sort_index(axis=1)
 
-    # 根据转速筛选行
+    # 根据转速筛选选
     def rpm_filter(self,data,section = []):
         if section == []:
             if self.__engine == "RR_RB211":
@@ -177,10 +187,11 @@ class NameModifier():
     def listing(self):
         return list(self.__dic)
 
-    def __call__(self, data, mode = "original", retain="ALL", section = []):
+    def __call__(self, data, mode = "original", retain="ALL", section = [], tags = []):
         retain_para = ["ALL","NONE","T"]
         if retain not in retain_para:
             raise Exception("Inexistent parameter! Error parameter: "+retain)
+        self.__tags = tags
         indexes = data.index.to_list()
         # 列重命名
         self.rename(data)
@@ -214,10 +225,10 @@ def test():
     # NF = NameModifier("Liburdi","GE_LM2500")
     # df = pd.read_excel('../Liburdi_GEtest.xlsx')
     
-    new_df,index = NF(df,"union",'ALL')
+    new_df,index = NF(df,"original",'T')
     print("NF.listing():",NF.listing())
     print(new_df)
-    print(index)
+    # print(index)
     new_df.to_excel('../output.xlsx')
 
 if __name__ == "__main__":
@@ -237,5 +248,3 @@ if __name__ == "__main__":
 
     # dic = df.to_dict(orient='records')[0]
     # print(dic)
-
-
