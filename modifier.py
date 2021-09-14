@@ -5,17 +5,28 @@ import os
 dirname = os.path.split(__file__)[0]
 
 class NameModifier():
-    def __init__(self, system, engine):
-        # ststem: BH,Liburdi
-        if system != "BH" and system != "Liburdi":
-            raise Exception("Inexistent system name! Error name: "+system)
-        # engine: RR_RB211,GE_LM2500
+    def __init__(self, system="other", engine="other", path=""):
+        # ststem: BH,Liburdi,other(需要自定义csv名称转换文件)
+        # engine: RR_RB211,GE_LM2500,other
         if engine == "RR":
             engine = "RR_RB211"
         if engine == "GE":
             engine = "GE_LM2500"
-        if engine != "RR_RB211" and engine != "GE_LM2500":
-            raise Exception("Inexistent engine name! Error name: "+engine)
+        # 自定义名称转换规则
+        if (system != "BH" and system != "Liburdi") or (engine != "RR_RB211" and engine != "GE_LM2500"):
+            if path == "":
+                raise Exception("Path of configuration file is not provided!")
+            df = pd.read_csv(path, encoding = 'gbk')
+            df.rename(columns=lambda x: x.strip(),inplace=True)
+            df.loc[0] = [x.strip() for x in list(df.loc[0])]
+            dic = df.to_dict(orient='records')[0]
+            self.__names = list(dic) # 字典中所有转换后的数据名
+            # 反转字典
+            self.__dic = dict(zip(dic.values(),dic.keys())) # 系统及燃机对应的字典
+            self.__system = "other" # 检测系统
+            self.__engine = "other" # 燃机型号
+            return
+
         BH_RR_RB211,BH_GE_LM2500,Liburdi_RR_RB211,Liburdi_GE_LM2500 =self.__read_csv()
         self.__system = system # 检测系统
         self.__engine = engine # 燃机型号
@@ -42,8 +53,8 @@ class NameModifier():
                 intersection_add.append(name[0:-1])
         self.__name_union = self.__name_union | set(union_add)
         self.__name_intersection = self.__name_intersection | set(intersection_add)
-        self.__tags = []
 
+    # 读取配置文件(BH、Liburdi转换表)
     def __read_csv(self):
         df = pd.read_csv(dirname + "/Config/BH_RR_RB211.csv")
         BH_RR_RB211 = df.to_dict(orient='records')[0]
@@ -73,6 +84,7 @@ class NameModifier():
             self.__Liburdi_prefix_processing(data)
 
         # 根据字典修改列名
+        data.rename(columns=lambda x: x.strip() if type(x) == str else x,inplace=True)
         data.rename(columns=self.__dic,inplace=True)
     
     # 只保留进行了重命名的数据(即已知意义的数据)
@@ -97,7 +109,7 @@ class NameModifier():
         data.replace(regex=r".*[a-zA-Z]+.*", value=-1, inplace=True)
         return data.apply(pd.to_numeric,errors = 'ignore')
 
-    # 部分数据计算平均值
+    # 部分数据计算平均值（重命名之后）
     def avg_calculating(self,data):
         # 遍历所有数据名 找到需要计算平均值的数据（判断依据以'a'结尾）
         for name in data.columns.values:
@@ -119,11 +131,11 @@ class NameModifier():
                 data[name] += data[i]
             data[name]/=len(names)   
 
-    # 不同系统数据间去交集或并集, 补全没有测量值的数据（用-1）
-    def complement(self,data,mode = "original"):
+    # 不同系统数据间取交集或并集, 补全没有测量值的数据（用-1）
+    def complement(self,data,mode = "original",tags=[]):
         empty_column = [-1 for i in range(len(data.index.values))] # 空列（-1）
-        if self.__tags != []:
-            missing_names = set(self.__tags)-set(data.columns.values)
+        if tags != []:
+            missing_names = set(tags)-set(data.columns.values)
             for name in missing_names:
                 data[name] = empty_column
 
@@ -149,7 +161,7 @@ class NameModifier():
         else:
             raise Exception("Inexistent parameter! Error parameter: "+mode)
 
-    # 筛选去除多测量值数据，只保留平均值
+    # 筛选去除多测量值数据，只保留平均值（求平均值后使用，因为可能没有平均值）
     def filter(self,data,retain="ALL"):
         para = ["ALL","NONE","T"]
         if retain not in para:
@@ -170,13 +182,15 @@ class NameModifier():
     def sort(self,data):
         return data.sort_index(axis=1)
 
-    # 根据转速筛选选
+    # 根据转速筛选
     def rpm_filter(self,data,section = []):
         if section == []:
             if self.__engine == "RR_RB211":
                 section = [8200, 9500]
             elif self.__engine == "GE_LM2500":
                 section = [8200, 10000]
+            else :
+                raise Exception("Lack rpm range!")
         indexes = []
         for index,rmp in enumerate(data["3NH"]):
             if section[0] <= rmp <= section[1]:
@@ -187,11 +201,10 @@ class NameModifier():
     def listing(self):
         return list(self.__dic)
 
-    def __call__(self, data, mode = "original", retain="ALL", section = [], tags = []):
+    def __call__(self, data, retain="ALL", section = []):
         retain_para = ["ALL","NONE","T"]
         if retain not in retain_para:
             raise Exception("Inexistent parameter! Error parameter: "+retain)
-        self.__tags = tags
         indexes = data.index.to_list()
         # 列重命名
         self.rename(data)
@@ -201,8 +214,6 @@ class NameModifier():
         new_data = self.missing_value_processing(new_data)
         # 多测量值数据的均值计算
         self.avg_calculating(new_data)
-        # 不同系统测量值之间取交集或并集，并用-1补全没有的数据
-        new_data = self.complement(new_data,mode)
         # 筛选数据()
         new_data = self.filter(new_data,retain)
         # 根据数据名排序
@@ -213,8 +224,8 @@ class NameModifier():
         return new_data,indexes
 
 def test():
-    NF = NameModifier("BH","RR_RB211")
-    df = pd.read_excel('../BH_RRtest.xlsx')
+    # NF = NameModifier("BH","RR_RB211")
+    # df = pd.read_excel('../BH_RRtest.xlsx')
 
     # NF = NameModifier("BH","GE_LM2500")
     # df = pd.read_excel('../BH_GEtest.xlsx')
@@ -225,11 +236,20 @@ def test():
     # NF = NameModifier("Liburdi","GE_LM2500")
     # df = pd.read_excel('../Liburdi_GEtest.xlsx')
     
-    new_df,index = NF(df,"original",'T')
+    # new_df,index = NF(df,'ALL')
+    # print("NF.listing():",NF.listing())
+    # print(new_df)
+    # new_df.to_excel('../output.xlsx')
+
+# 自定义测试
+    NF = NameModifier(path="../my_dic.csv")
+    df = pd.read_excel('../中卫2015.xlsx')
+
+    new_df,index = NF(df,'ALL',[8200, 9500])
     print("NF.listing():",NF.listing())
     print(new_df)
-    # print(index)
     new_df.to_excel('../output.xlsx')
+
 
 if __name__ == "__main__":
     test()
