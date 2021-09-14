@@ -37,15 +37,24 @@ NF = NameModifier("Liburdi","GE_LM2500")
 |__name_intersection (set) | 不同系统所采集的数据取并集 |
 
 
-### 三. 调用：
+### 三. 直接调用：
 输入输出类型均为pandas的dataframe
 ```python
 df = pd.read_excel('Liburdi_GEtest.xlsx')
 new_df = NF(df,'ALL')
 new_df.to_excel('output.xlsx')
 ```
-参数1为输入数据  
-参数2见方法6`filter(data,retain)`
+参数1`data`为输入数据  
+参数2`retain`为筛选方式，见方法6`filter(data,retain)`  
+参数3`section`为转速筛选区间，见方法8`rpm_filter(data,section)`
+#### 直接调用包含了以下功能
+- 对数据进行重命名并进行筛选
+- 将异常数据置为-1
+- 对多测量值的数据计算平均值
+- 输出中只保留数据平均值（参数2`retain`）
+- 数据根据名称排序
+- 根据转速对数据进行筛选（参数3`section`）
+
 ### 四. 方法：
 #### 1. `rename(data)`
 根据名称转换字典`self._dic`对数据进行重命名
@@ -90,3 +99,10 @@ GE_LM2500 默认[8200, 10000]
 #### 9. `listing()`
 返回会被保留的数据（即excel中存在已知意义的数据）重命名前的名称列表  
 （这方法一般情况下用不上）
+
+### 五. 命名规则
+|位置|意义|  
+|----| ---- |
+首位（数字） |测点位置
+中间（一般为大写字母）|测量值物理意义
+末尾（小写字母）|同一物理量存在多测量值时进行标记，类似角标
