@@ -84,7 +84,7 @@ class NameModifier():
             self.__Liburdi_prefix_processing(data)
 
         # 根据字典修改列名
-        data.rename(columns=lambda x: x.strip() if type(x) == str else x,inplace=True)
+        data.rename(columns=lambda x: x.strip().lower() if type(x) == str else x,inplace=True)
         data.rename(columns=self.__dic,inplace=True)
     
     # 只保留进行了重命名的数据(即已知意义的数据)
@@ -113,8 +113,8 @@ class NameModifier():
     def avg_calculating(self,data):
         # 遍历所有数据名 找到需要计算平均值的数据（判断依据以'a'结尾）
         for name in data.columns.values:
-            if name[-1] != 'a':
-                #不是a结尾则跳过
+            if name[-1] < 'a' and name[-1] > 'z':
+                #不是小写字母结尾则跳过
                 continue
             name = name[0:-1] #去掉末尾的a
             if name in data.columns.values:
@@ -214,6 +214,7 @@ class NameModifier():
         new_data = self.missing_value_processing(new_data)
         # 多测量值数据的均值计算
         self.avg_calculating(new_data)
+        print(new_data.columns)
         # 筛选数据()
         new_data = self.filter(new_data,retain)
         # 根据数据名排序
@@ -227,8 +228,8 @@ def test():
     # NF = NameModifier("BH","RR_RB211")
     # df = pd.read_excel('../BH_RRtest.xlsx')
 
-    # NF = NameModifier("BH","GE_LM2500")
-    # df = pd.read_excel('../BH_GEtest.xlsx')
+    NF = NameModifier("BH","GE_LM2500")
+    df = pd.read_excel('../BH_GEtest.xlsx')
 
     # NF = NameModifier("Liburdi","RR_RB211")
     # df = pd.read_excel('../Liburdi_RRtest.xlsx')
@@ -236,19 +237,19 @@ def test():
     # NF = NameModifier("Liburdi","GE_LM2500")
     # df = pd.read_excel('../Liburdi_GEtest.xlsx')
     
-    # new_df,index = NF(df,'ALL')
-    # print("NF.listing():",NF.listing())
-    # print(new_df)
+    new_df,index = NF(df,'ALL')
+    print("NF.listing():",NF.listing())
+    print(new_df)
     # new_df.to_excel('../output.xlsx')
 
 # 自定义测试
-    NF = NameModifier(path="../my_dic.csv")
-    df = pd.read_excel('../中卫2015.xlsx')
+    # NF = NameModifier(path="../my_dic.csv")
+    # df = pd.read_excel('../中卫2015.xlsx')
 
-    new_df,index = NF(df,'ALL',[8200, 9500])
-    print("NF.listing():",NF.listing())
-    print(new_df)
-    new_df.to_excel('../output.xlsx')
+    # new_df,index = NF(df,'ALL',[8200, 9500])
+    # print("NF.listing():",NF.listing())
+    # print(new_df)
+    # new_df.to_excel('../output.xlsx')
 
 
 if __name__ == "__main__":
